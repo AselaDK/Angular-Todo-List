@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Todo } from 'src/app/models/Todo';
 import { TodoService } from "../../services/todo.service";
 
@@ -9,8 +9,11 @@ import { TodoService } from "../../services/todo.service";
 })
 export class TodoItemComponent implements OnInit {
 
-  // Input is need when we this component is accessed by another component in html
+  // Input is need when we this component is accessed by parent component in html
   @Input() todo: Todo;
+  // Input is need when we this component is get out from parent component in html
+  // deleteTodo is the catch word that send to parent component(html) 
+  @Output() deleteTodo: EventEmitter<Todo> = new EventEmitter();
 
   constructor(private todoService:TodoService) { }
 
@@ -32,12 +35,13 @@ export class TodoItemComponent implements OnInit {
     todo.completed = !todo.completed;
 
     //Toggle on Server
-    this.todoService.toggleCompleted(todo).subscribe(todo =>
-      console.log(todo));
+    this.todoService.toggleCompleted(todo).subscribe();
   }
 
   onDelete(todo) {
-    console.log('delete');
+    // this will send a message to parent component when somthing happens in this child component
+    // deleteTodo is the catch word that send to parent component(html) 
+    this.deleteTodo.emit(todo);
   }
 
 }
